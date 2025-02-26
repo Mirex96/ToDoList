@@ -1,16 +1,9 @@
-//
-//  ShadowButton.swift
-//  ToDoList
-//
-//  Created by Станислав Витальевич on 27.02.2025.
-//
-
 import UIKit
 
 
 @IBDesignable
 class ShadowButton: UIButton {
-   
+    
     @IBInspectable
     var cornerRadius: CGFloat = 5 {
         didSet {
@@ -32,18 +25,15 @@ class ShadowButton: UIButton {
         }
     }
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         setupView()
         
     }
     
-    
     override func prepareForInterfaceBuilder() {
         setupView()
     }
-    
     
     private func setupView() {
         titleLabel?.font = UIFont.style(.buttonTitle)
@@ -53,8 +43,6 @@ class ShadowButton: UIButton {
         layer.shadowOpacity = 1.0
         layer.shadowRadius = 0
     }
-    
-   
     
     // смещение тени вниз
     override func didMoveToSuperview() {
@@ -67,8 +55,7 @@ class ShadowButton: UIButton {
         
         layer.cornerRadius = cornerRadius
         
-        // цвет тени
-        //layer.shadowColor = UIColor(named: "secondaryLink")?.cgColor
+        
         
     }
 }
