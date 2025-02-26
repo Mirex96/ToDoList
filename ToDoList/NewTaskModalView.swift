@@ -30,12 +30,6 @@ class NewTaskModalView: UIView {
         nib.instantiate(withOwner: self)
         
         
-        // стиль текста
-//        titleLabel.font = UIFont.style(.h1)
-//        caprionLabel.font = UIFont.style(.formLabel)
-//        categoryLabel.font = UIFont.style(.formLabel)
-//        submitButton.font = UIFont.style(.buttonTitle)
-        
         // Настройка представления для ввода текста
         descriptionTectView.layer.borderWidth = 0.5
         descriptionTectView.layer.borderColor = UIColor.lightGray.cgColor
@@ -83,7 +77,9 @@ class NewTaskModalView: UIView {
     
     @IBAction func submitButtonTapped(_ sender: UIButton) {
         guard let caption = descriptionTectView.text,
+              descriptionTectView.textColor != UIColor.placeholderText,
               caption.count >= 4 else {
+            shakeAnimation()
             return
         }
         let selectedRow = categoryPickerView.selectedRow(inComponent: 0)
@@ -157,6 +153,18 @@ extension NewTaskModalView: UIPickerViewDelegate {
         let category = Category.allCases[row]
         pickerLabel?.text = category.rawValue
         return pickerLabel!
+    }
+}
+
+extension UIView {
+    func shakeAnimation(duration: TimeInterval = 0.5, shakeCount: Float = 3, translationX: CGFloat = 5) {
+        let animation = CABasicAnimation(keyPath: "position.x")
+        animation.duration = duration / TimeInterval(shakeCount)
+        animation.repeatCount = shakeCount
+        animation.autoreverses = true
+        animation.fromValue = self.center.x - translationX
+        animation.toValue = self.center.x + translationX
+        self.layer.add(animation, forKey: "position.x")
     }
 }
 
