@@ -2,6 +2,7 @@ import UIKit
 
 protocol NewTaskDelegate: AnyObject {
     func closeView()
+    func presentErrorAlert(title: String, message: String)
 }
 
 class NewTaskViewController: UIViewController {
@@ -55,6 +56,14 @@ class NewTaskViewController: UIViewController {
 extension NewTaskViewController: NewTaskDelegate {
     func closeView() {
         dismiss(animated: true)
+    }
+    
+    func presentErrorAlert(title: String, message: String) {
+        //  уведомление при недостаточном количестве введенных букв
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 }
 

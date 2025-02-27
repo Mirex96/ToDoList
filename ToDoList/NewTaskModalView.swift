@@ -79,6 +79,7 @@ class NewTaskModalView: UIView {
         guard let caption = descriptionTectView.text,
               descriptionTectView.textColor != UIColor.placeholderText,
               caption.count >= 4 else {
+            delegate?.presentErrorAlert(title: "Caption Error", message: "You need to provide a description with 4 or more charaters")
             shakeAnimation()
             return
         }
