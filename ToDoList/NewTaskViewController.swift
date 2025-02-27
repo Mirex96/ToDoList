@@ -32,7 +32,7 @@ class NewTaskViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black.withAlphaComponent(0.9)
+        view.backgroundColor = .black.withAlphaComponent(0.5)
         
         // animation
         modalView.transform = CGAffineTransform(scaleX: 0, y: 0)
