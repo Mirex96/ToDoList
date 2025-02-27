@@ -260,6 +260,7 @@
                     <connections>
                         <outlet property="appThemeLabel" destination="3p2-QE-piW" id="ahY-aG-Kfd"/>
                         <outlet property="modalView" destination="kBD-Di-eIk" id="eaq-Kc-Wpx"/>
+                        <outlet property="segmentedControl" destination="TUf-IP-3f3" id="A1k-Pb-bBi"/>
                         <outlet property="settingsTitleLabel" destination="vbs-Bb-Vwv" id="0VF-EM-WUc"/>
                     </connections>
                 </viewController>
