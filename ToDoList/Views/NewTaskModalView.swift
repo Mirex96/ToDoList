@@ -4,7 +4,6 @@ class NewTaskModalView: UIView {
     @IBOutlet private weak var descriptionTectView: UITextView!
     @IBOutlet private weak var categoryPickerView: UIPickerView!
     @IBOutlet private var contentView: UIView!
-    
     weak var delegate: NewTaskDelegate?
     private var task: Task?
     
@@ -29,19 +28,14 @@ class NewTaskModalView: UIView {
         let nib = UINib(nibName: "NewTaskModalView", bundle: nil)
         nib.instantiate(withOwner: self)
         
-        
         // Настройка представления для ввода текста
         descriptionTectView.layer.borderWidth = 0.5
         descriptionTectView.layer.borderColor = UIColor.lightGray.cgColor
         descriptionTectView.layer.cornerRadius = 8
-        
         descriptionTectView.delegate = self
-        
-        // Настройка представления с вабором категорий
+        // Настройка представления с выбором категорий
         categoryPickerView.dataSource = self
         categoryPickerView.delegate = self
-        
-        
         // Настройки для редактирования созданной задачи
         if let task = task {
             // если задачи не было, то оставляем возможность ее создать
@@ -51,7 +45,7 @@ class NewTaskModalView: UIView {
                 categoryPickerView.selectRow(rowIndex, inComponent: 0, animated: false)
             }
         } else {
-            // если задача сузествует, даем возможность ее изменить
+            // если задача существует, даем возможность ее изменить
             descriptionTectView.text = "Add caption..."
             descriptionTectView.textColor = .placeholderText  // текст на две темы динамический
             categoryPickerView.selectRow(1, inComponent: 0, animated: false)
@@ -65,8 +59,6 @@ class NewTaskModalView: UIView {
     override func layoutSubviews() {
         // закругление углов самого Таблета
         contentView.layer.cornerRadius = 5
-        
-        
     }
     
     

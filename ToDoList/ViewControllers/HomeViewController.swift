@@ -1,25 +1,27 @@
 
 import UIKit
 
+/// The first screen you see when the app launches. This is where you see all tasks and this is the standing point for adding or editing a task. Tasks can only be deleted from here.
 class HomeViewController: UIViewController {
     
     @IBOutlet weak var titleView: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
-    
-    
-    
     // массив для наших задач
     var tasks: [Task] = []
     
     
-    // создаем кнопку добавления (+ снизу)
-    // lazy означает что кнопка будет создана только один раз и только когда она понадобится
-    lazy var addButton: UIButton = {
+     /**
+     создаем кнопку добавления (+ снизу)
+     lazy означает что кнопка будет создана только один раз и только когда она понадобится
+     We create the button programatically because e cannot add the button as a subview of  tableView in the intarfase builder
+     */
+      lazy var addButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .link
         button.tintColor = .white
         button.setImage(UIImage(systemName: "plus"), for: .normal)
+        // We change the scale of the imageView to make the size of the plus image bigger
         button.imageView?.layer.transform = CATransform3DMakeScale(1.4, 1.4, 1.4)  // изменили размер плюса (больше в 1.4 раза)
         button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside) // добавили нажатие для кнопки
         return button
@@ -27,34 +29,39 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupView()
+        setupNotifications()
+    }
+    
+    private func setupView() {
         titleView.clipsToBounds = true
         titleView.layer.cornerRadius = 24
-        
         // чтобы закругления были снизу (левый низ, правый низ)
         titleView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        
         tableView.dataSource = self
-        
         // задаем приблизительную высоту строки в таблице
         tableView.estimatedRowHeight =  80
         // делаем так чтобы размер определялся автоматически
         tableView.rowHeight = UITableView.automaticDimension
-        
         // добавление кнопки (добавить +) на экран
         view.addSubview(addButton)
-        
-        // добавляем центр уведомлений
-        NotificationCenter.default.addObserver(self, selector: #selector(createTask(_ :)), name: NSNotification.Name("com.fullstacktuts.createTask"), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(editTask(_ :)), name: NSNotification.Name("com.fullstacktuts.editTask"), object: nil)
-        
         // убираем подчеркивание между задачами
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .none
-        
-        
     }
     
+    /// We setup observers to watch for notifications when a new task is created or when a task is edited
+    private func setupNotifications() {
+        // добавляем центр уведомлений
+        NotificationCenter.default.addObserver(self, selector: #selector(createTask(_ :)), name: NSNotification.Name("com.Mirex96.createTask"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(editTask(_ :)), name: NSNotification.Name("com.Mirex96.editTask"), object: nil)
+    }
+    
+    /**
+       This responds to a task that has been created from the NewTaskViewController. The notification object holds a userinfo object with the task that needs to be updated
+       - Parameters:
+            - notification: The notification object from the com.Mirex96.createTask notification
+     */
     // функция которая будет вызываться при получении уведомления о новой задаче
     @objc func createTask(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
@@ -62,9 +69,15 @@ class HomeViewController: UIViewController {
             return
         }
         tasks.append(task)
+        // перезапускаем tableView
         tableView.reloadData()
     }
     
+    /**
+       This responds to a task that has been edited from the NewTaskViewController. The notification object holds a userinfo object with the task that needs to be updated
+       - Parameters:
+            - notification: The notification object from the com.Mirex96.editTask notification
+     */
     @objc func editTask(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let taskToUpdate = userInfo["updateTask"] as? Task  else {
@@ -77,6 +90,7 @@ class HomeViewController: UIViewController {
             return
         }
         tasks[taskIndex] = taskToUpdate
+        // перезапускаем tavleView
         tableView.reloadData()
     }
     
@@ -107,6 +121,7 @@ class HomeViewController: UIViewController {
     
 }
 
+// MARK: - Methods conforming to UITableViewDataSource
 // реализация ячеек в TableView
 extension HomeViewController: UITableViewDataSource {
     // количество ячеек
@@ -132,6 +147,7 @@ extension HomeViewController: UITableViewDataSource {
     
 }
 
+// MARK: - Methods conforming to TaskTableViewCellDelegate
 extension HomeViewController: TaskTableViewCellDelegate {
     func editTask(id: String) {
         let task = tasks.first { task in
@@ -140,11 +156,9 @@ extension HomeViewController: TaskTableViewCellDelegate {
         guard let task = task  else {
             return
         }
-       
         let newTaskViewController = NewTaskViewController(task: task)
         present(newTaskViewController, animated: true)
     }
-    
     
     func markTask(id: String, complete: Bool) {
         let taskIndex = tasks.firstIndex { task in
