@@ -14,7 +14,6 @@ class SettingsViewController: UIViewController {
 
         setupView()
         
-    
     }
     
     private func setupView() {
@@ -52,12 +51,16 @@ class SettingsViewController: UIViewController {
         // если выбранный сегмент = 0 то есть первый мы включаем светлый режим
         if sender.selectedSegmentIndex == 0 {
             window?.overrideUserInterfaceStyle = .light
+            // Класс, который содержит все функции для работы с пользовательскимим настройками
+            UserDefaults.standard.set(0, forKey: "interfacePreference")
             // темный режим
         } else if sender.selectedSegmentIndex == 1 {
             window?.overrideUserInterfaceStyle = .dark
-            // устанавливаются системные настройки
+            UserDefaults.standard.set(1, forKey: "interfacePreference")
         } else {
+            // устанавливаются системные настройки
             window?.overrideUserInterfaceStyle = .unspecified
+            UserDefaults.standard.set(2, forKey: "interfacePreference")
         }
     }
     
