@@ -107,6 +107,9 @@
 			);
 			mainGroup = 79AA581D2D6F88BC00C8EF5F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7926D5862D73301A0087E574 /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 79AA58272D6F88BC00C8EF5F /* Products */;
 			projectDirPath = "";
@@ -333,6 +336,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7926D5862D73301A0087E574 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 20.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 79AA581E2D6F88BC00C8EF5F /* Project object */;
 }
