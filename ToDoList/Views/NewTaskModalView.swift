@@ -1,4 +1,5 @@
 import UIKit
+import os
 
 class NewTaskModalView: UIView {
     @IBOutlet private weak var descriptionTectView: UITextView!
@@ -68,6 +69,8 @@ class NewTaskModalView: UIView {
     
     
     @IBAction func submitButtonTapped(_ sender: UIButton) {
+        os_log("Task creation has started. Submit button tapped / Началось создание задания. Нажата кнопка Отправить", type: .info)
+        
         guard let caption = descriptionTectView.text,
               descriptionTectView.textColor != UIColor.placeholderText,
               caption.count >= 4 && caption.count <= 50 else { 
@@ -75,22 +78,24 @@ class NewTaskModalView: UIView {
             shakeAnimation()
             return
         }
+        os_log("Validation of task suceeded / Проверка выполнения задачи выполнена успешно", type: .info)
+        
         let selectedRow = categoryPickerView.selectedRow(inComponent: 0)
         let category = Category.allCases[selectedRow]
         if let task = task {
             let task = Task(id: task.id, category: category, caption: caption, createdDate: task.createdDate, isComplete: task.isComplete)
             let userInfo: [String: Task] = ["updateTask": task]
-            NotificationCenter.default.post(name: NSNotification.Name("com.fullstacktuts.editTask"), object: nil, userInfo: userInfo)
+            NotificationCenter.default.post(name: NSNotification.Name("com.Mirex96.editTask"), object: nil, userInfo: userInfo)
         } else {
             // cоздаем объект задачи
             let taskId = UUID().uuidString
             let task = Task(id: taskId, category: category, caption: caption, createdDate: Date(), isComplete: false)
             // объект с информацией о пользователе
             let userInfo: [String: Task] = ["newTask": task]
+            os_log("Task posted as part of notification / Задача, опубликованная как часть уведомления", type: .info)
             // центр уведомлений
-            NotificationCenter.default.post(name: NSNotification.Name("com.fullstacktuts.createTask"), object: nil, userInfo: userInfo)
+            NotificationCenter.default.post(name: NSNotification.Name("com.Mirex96.createTask"), object: nil, userInfo: userInfo)
         }
-        
         // после добавления задачи закрываем окно
         delegate?.closeView()
     }
@@ -115,7 +120,6 @@ extension NewTaskModalView: UITextViewDelegate {
             textView.textColor = UIColor.placeholderText
         }
     }
-    
 }
 
 // Методы для настройки категорий (пикера)

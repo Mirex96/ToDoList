@@ -1,15 +1,13 @@
-
 import UIKit
+import os
 
 /// The first screen you see when the app launches. This is where you see all tasks and this is the standing point for adding or editing a task. Tasks can only be deleted from here.
 class HomeViewController: UIViewController {
     
     @IBOutlet weak var titleView: UILabel!
     @IBOutlet weak var tableView: UITableView!
-    
     // массив для наших задач
     var tasks: [Task] = []
-    
     
      /**
      создаем кнопку добавления (+ снизу)
@@ -43,11 +41,11 @@ class HomeViewController: UIViewController {
         tableView.estimatedRowHeight =  80
         // делаем так чтобы размер определялся автоматически
         tableView.rowHeight = UITableView.automaticDimension
-        // добавление кнопки (добавить +) на экран
-        view.addSubview(addButton)
         // убираем подчеркивание между задачами
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .none
+        // добавление кнопки (добавить +) на экран
+        view.addSubview(addButton)
     }
     
     /// We setup observers to watch for notifications when a new task is created or when a task is edited
@@ -64,6 +62,8 @@ class HomeViewController: UIViewController {
      */
     // функция которая будет вызываться при получении уведомления о новой задаче
     @objc func createTask(_ notification: Notification) {
+        os_log("Task received by notification observor / Задача, полученная наблюдателем за уведомлением", type: .info)
+        
         guard let userInfo = notification.userInfo,
               let task = userInfo["newTask"] as? Task  else {
             return
@@ -71,6 +71,7 @@ class HomeViewController: UIViewController {
         tasks.append(task)
         // перезапускаем tableView
         tableView.reloadData()
+        os_log("Task successfully created / Задача успешно создана", type: .info)
     }
     
     /**
@@ -94,7 +95,6 @@ class HomeViewController: UIViewController {
         tableView.reloadData()
     }
     
-    
     // установка рамок и раcположения для кнопки
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -113,12 +113,9 @@ class HomeViewController: UIViewController {
         present(newTaskViewController, animated: true)
     }
     
-    
     @IBAction func settingsButtonTapped(_ sender: UIButton) {
         performSegue(withIdentifier: "SettingsSegue", sender: nil)
-        
     }
-    
 }
 
 // MARK: - Methods conforming to UITableViewDataSource
@@ -144,7 +141,6 @@ extension HomeViewController: UITableViewDataSource {
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
-    
 }
 
 // MARK: - Methods conforming to TaskTableViewCellDelegate
@@ -169,12 +165,7 @@ extension HomeViewController: TaskTableViewCellDelegate {
         }
         tasks[taskIndex].isComplete = complete
         tableView.reloadData()
-        
     }
-    
-    
-    
-    
 }
 
 

@@ -36,7 +36,7 @@ class NewTaskViewController: UIViewController {
         - Parameters:
               - task: If a task is being edited, task should be passed. If a new task is being created, task should be nil
         - Returns: NewTaskViewController with a NewTaskModalView for the user to edit or create a task
-              -
+              
      */
     init(task: Task? = nil) {
         super.init(nibName: nil, bundle: nil)
@@ -53,8 +53,8 @@ class NewTaskViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black.withAlphaComponent(0.5)
         // animation
-        // We change the transform of the modal view to zero to perform a scale up nimation when the view appears
-        modalView.transform = CGAffineTransform(scaleX: 0, y: 0)
+        // We change the transform of the modal view to zero to perform a scale up animation when the view appears
+//        modalView.transform = CGAffineTransform(scaleX: 0, y: 0)
         view.addSubview(modalView)
     }
     

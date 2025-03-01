@@ -13,13 +13,12 @@ class SettingsViewController: UIViewController {
         super.viewDidLoad()
 
         setupView()
+        
     
     }
     
     private func setupView() {
         settingsTitleLabel.font = UIFont.style(.h1)
-        // We change the transform of the modal view to zero to perform a scale up nimation when the view appears
-        modalView.transform = CGAffineTransform(scaleX: 0, y: 0)
         // We change the segmented controls selected index to the current interfase style
         let window = UIApplication.shared.connectedScenes.flatMap{ ($0 as? UIWindowScene)?.windows ?? [] }.first { $0.isKeyWindow }
         if let window = window {
@@ -33,14 +32,11 @@ class SettingsViewController: UIViewController {
             @unknown default:
                 segmentedControl.selectedSegmentIndex = 2
             }
-            
         }
-        
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
         modalView.layer.cornerRadius = 5
     }
     
@@ -63,12 +59,6 @@ class SettingsViewController: UIViewController {
         } else {
             window?.overrideUserInterfaceStyle = .unspecified
         }
-        
-        
-            
-        
-        
-        
     }
     
 }
