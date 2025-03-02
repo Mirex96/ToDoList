@@ -9,7 +9,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     // массив для наших задач
     var tasks: [Task] = []
-    // REALM 1
+    // REALM
     let realm = try! Realm()
     
     
@@ -34,8 +34,8 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupNotifications()
-        
-        //REALM 3
+        // MARK: - Realm - добавление задачи
+        //REALM 2 Добавление задачи
         let localTasks = realm.objects(LocalTasc.self)
         for localTask in localTasks {
             let task = Task(id: localTask._id, category: localTask.category, caption: localTask.caption, createdDate: localTask.createdDate, isComplete: localTask.isComplete)
@@ -85,7 +85,8 @@ class HomeViewController: UIViewController {
         // перезапускаем tableView
         tableView.reloadData()
         
-        // REALM 2
+        // MARK: - REALM - создание удаления задачи
+        // REALM 1 Добавление задачи
         let localTask = LocalTasc()
         localTask._id = task.id
         localTask.caption = task.caption
@@ -123,6 +124,21 @@ class HomeViewController: UIViewController {
         tasks[taskIndex] = taskToUpdate
         // перезапускаем tavleView
         tableView.reloadData()
+        
+        // MARK: - REALM - редактирование задачи
+        // REALM - редактирование задачи 1, изменяем все кроме id и даты созадния так как он остается неизменным
+        if let localTaskToEdit = realm.object(ofType: LocalTasc.self, forPrimaryKey: taskToUpdate.id) {
+            do {
+                try realm.write {
+                    localTaskToEdit.caption = taskToUpdate.caption
+                    localTaskToEdit.isComplete = taskToUpdate.isComplete
+                    localTaskToEdit.category = taskToUpdate.category
+                }
+            } catch let error as NSError {
+                let errorText = error.localizedDescription
+                os_log("%@", type:.error, errorText)
+            }
+        }
     }
     
     // установка рамок и раcположения для кнопки
@@ -167,6 +183,19 @@ extension HomeViewController: UITableViewDataSource {
     // удаление задачи
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            // MARK: - REALM - удаление задачи
+            // REALM УДАЛЕНИЕ 1.
+            let taskToDelete =  tasks[indexPath.row]  // используем id задачи чтобы найти нужную для удаления
+            if let localTaskToDelete = realm.object(ofType: LocalTasc.self, forPrimaryKey: taskToDelete.id) {
+                do {
+                    try realm.write {
+                        realm.delete(localTaskToDelete)
+                    }
+                } catch let error as NSError {
+                    let errorText = error.localizedDescription
+                    os_log("%@", type:.error, errorText)
+                }
+            }
             tasks.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
