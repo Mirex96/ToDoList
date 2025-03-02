@@ -1,5 +1,6 @@
 import UIKit
 import os
+import RealmSwift
 
 /// The first screen you see when the app launches. This is where you see all tasks and this is the standing point for adding or editing a task. Tasks can only be deleted from here.
 class HomeViewController: UIViewController {
@@ -8,13 +9,17 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     // массив для наших задач
     var tasks: [Task] = []
+    // REALM 1
+    let realm = try! Realm()
     
-     /**
+    
+    
+    /**
      создаем кнопку добавления (+ снизу)
      lazy означает что кнопка будет создана только один раз и только когда она понадобится
      We create the button programatically because e cannot add the button as a subview of  tableView in the intarfase builder
      */
-      lazy var addButton: UIButton = {
+    lazy var addButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .link
         button.tintColor = .white
@@ -29,6 +34,14 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupNotifications()
+        
+        //REALM 3
+        let localTasks = realm.objects(LocalTasc.self)
+        for localTask in localTasks {
+            let task = Task(id: localTask._id, category: localTask.category, caption: localTask.caption, createdDate: localTask.createdDate, isComplete: localTask.isComplete)
+            tasks.append(task)
+        }
+        tableView.reloadData()
     }
     
     private func setupView() {
@@ -56,9 +69,9 @@ class HomeViewController: UIViewController {
     }
     
     /**
-       This responds to a task that has been created from the NewTaskViewController. The notification object holds a userinfo object with the task that needs to be updated
-       - Parameters:
-            - notification: The notification object from the com.Mirex96.createTask notification
+     This responds to a task that has been created from the NewTaskViewController. The notification object holds a userinfo object with the task that needs to be updated
+     - Parameters:
+     - notification: The notification object from the com.Mirex96.createTask notification
      */
     // функция которая будет вызываться при получении уведомления о новой задаче
     @objc func createTask(_ notification: Notification) {
@@ -71,13 +84,30 @@ class HomeViewController: UIViewController {
         tasks.append(task)
         // перезапускаем tableView
         tableView.reloadData()
+        
+        // REALM 2
+        let localTask = LocalTasc()
+        localTask._id = task.id
+        localTask.caption = task.caption
+        localTask.category = task.category
+        localTask.createdDate = task.createdDate
+        localTask.isComplete = task.isComplete
+        do {
+            try realm.write {
+                realm.add(localTask)
+            }
+        } catch let error as NSError {
+            let errorText = error.localizedDescription
+            os_log("%@", type:.error, errorText)
+            
+        }
         os_log("Task successfully created / Задача успешно создана", type: .info)
     }
     
     /**
-       This responds to a task that has been edited from the NewTaskViewController. The notification object holds a userinfo object with the task that needs to be updated
-       - Parameters:
-            - notification: The notification object from the com.Mirex96.editTask notification
+     This responds to a task that has been edited from the NewTaskViewController. The notification object holds a userinfo object with the task that needs to be updated
+     - Parameters:
+     - notification: The notification object from the com.Mirex96.editTask notification
      */
     @objc func editTask(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
